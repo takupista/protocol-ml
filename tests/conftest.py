@@ -43,11 +43,25 @@ def sample_labels():
 
 # モック用のPredictor実装
 class MockPredictor:
-    def predict(self, features: WineFeatures) -> float:
-        return 5.0
+    def __init__(self):
+        # 正常系のテストのために、初期状態で訓練済みとする
+        self.is_trained = True
 
     def train(self, X: pd.DataFrame, y: pd.Series) -> None:
-        pass
+        if len(X) != len(y):
+            raise ValueError("Length of X and y must match")
+        self.is_trained = True
+
+    def predict(self, features: WineFeatures) -> float:
+        # pHの範囲チェック（これを最初に行う）
+        if features.pH > 14.0 or features.pH < 0:
+            raise ValueError("pH value out of valid range")
+
+        # 訓練状態のチェックは後で行う
+        if not self.is_trained:
+            raise RuntimeError("Model must be trained before prediction")
+            
+        return 5.0
 
 @pytest.fixture
 def mock_predictor():

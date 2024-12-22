@@ -10,16 +10,27 @@ from src.domain.protocols import WineFeatures, Predictor
 class BaseWinePredictor:
     """ワイン品質予測の基底クラス"""
     
+    # 特徴量名を固定順序で定義
+    FEATURE_NAMES = [
+        'fixed_acidity',
+        'volatile_acidity',
+        'citric_acid',
+        'residual_sugar',
+        'chlorides',
+        'free_sulfur_dioxide',
+        'total_sulfur_dioxide',
+        'density',
+        'pH',
+        'sulphates',
+        'alcohol'
+    ]
+    
     def _validate_features(self, features: WineFeatures) -> None:
         """特徴量の値を検証する"""
         feature_dict = asdict(features)
         
         # 必須フィールドの確認
-        required_fields = {
-            'fixed_acidity', 'volatile_acidity', 'citric_acid',
-            'residual_sugar', 'chlorides', 'free_sulfur_dioxide',
-            'total_sulfur_dioxide', 'density', 'pH', 'sulphates', 'alcohol'
-        }
+        required_fields = set(self.FEATURE_NAMES)
         missing_fields = required_fields - set(feature_dict.keys())
         if missing_fields:
             raise ValueError(f"Missing required fields: {missing_fields}")
@@ -46,23 +57,16 @@ class BaseWinePredictor:
                     f"{field} value {value} is outside valid range [{min_val}, {max_val}]"
                 )
 
-    def _features_to_array(self, features: WineFeatures) -> np.ndarray:
-        """WineFeaturesをモデル入力用の配列に変換する"""
+    def _features_to_array(self, features: WineFeatures) -> pd.DataFrame:
+        """WineFeaturesをモデル入力用のDataFrameに変換する"""
         feature_dict = asdict(features)
-        feature_array = np.array([
-            feature_dict['fixed_acidity'],
-            feature_dict['volatile_acidity'],
-            feature_dict['citric_acid'],
-            feature_dict['residual_sugar'],
-            feature_dict['chlorides'],
-            feature_dict['free_sulfur_dioxide'],
-            feature_dict['total_sulfur_dioxide'],
-            feature_dict['density'],
-            feature_dict['pH'],
-            feature_dict['sulphates'],
-            feature_dict['alcohol']
-        ]).reshape(1, -1)
-        return feature_array
+        
+        # 固定された順序で特徴量を並べる
+        features_df = pd.DataFrame([
+            [feature_dict[name] for name in self.FEATURE_NAMES]
+        ], columns=self.FEATURE_NAMES)
+        
+        return features_df
 
 
 class RandomForestWinePredictor(BaseWinePredictor):
@@ -81,6 +85,9 @@ class RandomForestWinePredictor(BaseWinePredictor):
             raise ValueError("Length of X and y must match")
         if len(X) == 0:
             raise ValueError("Cannot train model with empty dataset")
+        
+        # 特徴量名の順序を確認・調整
+        X = X[self.FEATURE_NAMES]
         
         self.model.fit(X, y)
         self.is_trained = True
@@ -122,6 +129,9 @@ class XGBoostWinePredictor(BaseWinePredictor):
             raise ValueError("Length of X and y must match")
         if len(X) == 0:
             raise ValueError("Cannot train model with empty dataset")
+        
+        # 特徴量名の順序を確認・調整
+        X = X[self.FEATURE_NAMES]
         
         self.model.fit(X, y)
         self.is_trained = True

@@ -5,7 +5,7 @@ import time
 import json
 from datetime import datetime
 
-from src.domain.protocols import Experiment, ExperimentResult, Predictor
+from src.domain.protocols import Experiment, ExperimentResult, Predictor, WineFeatures
 from src.models.predictors import RandomForestWinePredictor, XGBoostWinePredictor
 
 class WineQualityExperiment(Experiment):
@@ -47,6 +47,7 @@ class WineQualityExperiment(Experiment):
             if "max_depth" in params and (not isinstance(params["max_depth"], int) or params["max_depth"] <= 0):
                 raise ValueError("max_depth must be a positive integer")
 
+    # src/experiments/experiment.py
     def _calculate_metrics(
         self,
         predictor: Predictor,
@@ -57,10 +58,11 @@ class WineQualityExperiment(Experiment):
         predictions = []
         for _, row in X_test.iterrows():
             features_dict = row.to_dict()
-            features = {k: float(v) for k, v in features_dict.items()}  # numpy型をfloatに変換
+            # ここで features_dict を WineFeatures に変換する必要があります
+            features = WineFeatures(**features_dict)  # 修正
             prediction = predictor.predict(features)
             predictions.append(prediction)
-
+        
         metrics = {
             "mse": mean_squared_error(y_test, predictions),
             "mae": mean_absolute_error(y_test, predictions),

@@ -65,7 +65,7 @@ class TestPredictor:
         異常系: 訓練前の予測でRuntimeErrorが発生することを確認
         このテストは例外が発生することを期待している = テストは成功する
         """
+        mock_predictor.is_trained = False  # 明示的に未訓練状態にする
         with pytest.raises(RuntimeError) as excinfo:
             mock_predictor.predict(sample_wine_features)
-        
         assert "trained" in str(excinfo.value).lower()
