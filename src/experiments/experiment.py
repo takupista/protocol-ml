@@ -47,7 +47,6 @@ class WineQualityExperiment(Experiment):
             if "max_depth" in params and (not isinstance(params["max_depth"], int) or params["max_depth"] <= 0):
                 raise ValueError("max_depth must be a positive integer")
 
-    # src/experiments/experiment.py
     def _calculate_metrics(
         self,
         predictor: Predictor,
