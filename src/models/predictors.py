@@ -69,7 +69,7 @@ class BaseWinePredictor:
         return features_df
 
 
-class RandomForestWinePredictor(BaseWinePredictor):
+class RandomForestWinePredictor(BaseWinePredictor, Predictor):
     """RandomForestを使用したワイン品質予測モデル"""
     
     def __init__(self, n_estimators: int = 100, random_state: int = 42):
@@ -105,7 +105,7 @@ class RandomForestWinePredictor(BaseWinePredictor):
         return float(np.clip(prediction, 0, 10))
 
 
-class RandomBaselinePredictor(BaseWinePredictor):
+class RandomBaselinePredictor(BaseWinePredictor, Predictor):
     """ランダムな予測を行うベースラインモデル"""
     
     def __init__(self, random_state: int = 42):
@@ -151,7 +151,7 @@ class RandomBaselinePredictor(BaseWinePredictor):
         return float(self.rng.uniform(self.min_quality, self.max_quality))
 
 
-class XGBoostWinePredictor(BaseWinePredictor):
+class XGBoostWinePredictor(BaseWinePredictor, Predictor):
     """XGBoostを使用したワイン品質予測モデル"""
     
     def __init__(
