@@ -197,6 +197,7 @@ def analyze_feature_importance():
     各モデルが各特徴量をどの程度重視しているかを確認
     特定の特徴量への過度の依存がないかチェック
     異なるモデル間での特徴量の重要度の違いを比較
+    （RandomBaselinePredictorは特徴量重要度を持たないため、Feature Importanceの分析からは除外）
     """
     logger.info("\n=== Feature Importance Analysis ===")
     
@@ -254,6 +255,12 @@ def analyze_feature_importance():
     for _, row in importance_comparison.iterrows():
         logger.info(f"{row['feature']}: RF={row['rf_importance']:.4f}, XGB={row['xgb_importance']:.4f}")
 
+    # ランダムベースラインの性能をサンプルデータで確認
+    random_predictor = RandomBaselinePredictor(random_state=42)
+    random_predictor.train(X, y)
+    logger.info("\nRandom Baseline Note:")
+    logger.info(f"Random predictions will be between {random_predictor.min_quality:.1f} and {random_predictor.max_quality:.1f}")
+
 def run_basic_prediction():
     """
     基本的な予測の実行例
@@ -292,7 +299,7 @@ def run_experiment_comparison():
     """
     異なるモデルでの実験比較
     
-    RandomForestとXGBoostの性能を比較
+    RandomForest、XGBoost、ランダムベースラインの性能を比較
     """
     logger.info("Starting experiment comparison")
     
@@ -316,28 +323,38 @@ def run_experiment_comparison():
         y_test=y_test
     )
     
-    # XGBoostでの実験（パラメータ調整版）
+    # XGBoostでの実験
     xgb_result = experiment.run(
         experiment_name="xgb_experiment",
         params={
             "model_type": "xgboost",
-            "n_estimators": 200,        # 増やす
-            "learning_rate": 0.01,      # 小さくする
-            "max_depth": 4,             # 木の深さを制限
-            "min_child_weight": 2,      # 過学習防止
-            "subsample": 0.8,           # サンプリング率
-            "colsample_bytree": 0.8     # 特徴量のサンプリング率
+            "n_estimators": 200,
+            "learning_rate": 0.01,
+            "max_depth": 4,
+            "min_child_weight": 2,
+            "subsample": 0.8,
+            "colsample_bytree": 0.8
         },
         X_train=X_train,
         y_train=y_train,
         X_test=X_test,
         y_test=y_test
     )
+
+    # ランダムベースラインでの実験
+    random_predictor = RandomBaselinePredictor(random_state=42)
+    random_predictor.train(X_train, y_train)
+    random_predictions = np.array([
+        random_predictor.predict(WineFeatures(**features))
+        for features in X_test.to_dict('records')
+    ])
+    random_mse = np.mean((random_predictions - y_test) ** 2)
     
     # 結果の比較
     logger.info("\nExperiment Results Comparison:")
-    logger.info(f"RandomForest - MSE: {rf_result.metrics['mse']:.4f}")
-    logger.info(f"XGBoost     - MSE: {xgb_result.metrics['mse']:.4f}")
+    logger.info(f"RandomForest     - MSE: {rf_result.metrics['mse']:.4f}")
+    logger.info(f"XGBoost         - MSE: {xgb_result.metrics['mse']:.4f}")
+    logger.info(f"Random Baseline - MSE: {random_mse:.4f}")
 
 def run_model_management():
     """
@@ -351,40 +368,53 @@ def run_model_management():
     data = load_wine_data()
     X_train, X_test, y_train, y_test = prepare_data(data)
     
-    # モデルの訓練
-    predictor = RandomForestWinePredictor(n_estimators=100)
-    predictor.train(X_train, y_train)
-    
-    # モデル管理の初期化
+    # 各モデルの訓練と保存
     manager = WineModelManager(model_dir="./saved_models")
     
-    # モデルの保存
-    version = "v1.0"
-    manager.save_predictor(predictor, version)
-    logger.info(f"Saved model version: {version}")
+    # RandomForestモデル
+    rf_predictor = RandomForestWinePredictor(n_estimators=100)
+    rf_predictor.train(X_train, y_train)
+    manager.save_predictor(rf_predictor, "v1.0.0")  # 修正
+    
+    # XGBoostモデル
+    xgb_predictor = XGBoostWinePredictor(
+        n_estimators=200,
+        learning_rate=0.01,
+        max_depth=4
+    )
+    xgb_predictor.train(X_train, y_train)
+    manager.save_predictor(xgb_predictor, "v1.0.1")  # 修正
+    
+    # ランダムベースラインモデル
+    random_predictor = RandomBaselinePredictor(random_state=42)
+    random_predictor.train(X_train, y_train)
+    manager.save_predictor(random_predictor, "v1.0.2")  # 修正
     
     # 利用可能なバージョンの確認
     versions = manager.list_versions()
     logger.info(f"Available model versions: {versions}")
     
-    # モデルの読み込みと予測
-    loaded_predictor = manager.load_predictor(version)
-    if loaded_predictor:
-        sample_features = WineFeatures(
-            fixed_acidity=7.0,
-            volatile_acidity=0.5,
-            citric_acid=0.3,
-            residual_sugar=2.0,
-            chlorides=0.08,
-            free_sulfur_dioxide=20.0,
-            total_sulfur_dioxide=100.0,
-            density=0.997,
-            pH=3.2,
-            sulphates=0.6,
-            alcohol=10.0
-        )
-        prediction = loaded_predictor.predict(sample_features)
-        logger.info(f"Prediction using loaded model: {prediction:.2f}")
+    # サンプルデータでの予測比較
+    sample_features = WineFeatures(
+        fixed_acidity=7.0,
+        volatile_acidity=0.5,
+        citric_acid=0.3,
+        residual_sugar=2.0,
+        chlorides=0.08,
+        free_sulfur_dioxide=20.0,
+        total_sulfur_dioxide=100.0,
+        density=0.997,
+        pH=3.2,
+        sulphates=0.6,
+        alcohol=10.0
+    )
+
+    # 各モデルで予測
+    for version in versions:
+        predictor = manager.load_predictor(version)
+        if predictor:
+            prediction = predictor.predict(sample_features)
+            logger.info(f"Prediction using {version}: {prediction:.2f}")
 
 def main():
     """メイン実行関数"""
