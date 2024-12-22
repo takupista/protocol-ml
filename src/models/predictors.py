@@ -113,12 +113,18 @@ class XGBoostWinePredictor(BaseWinePredictor):
         n_estimators: int = 100,
         learning_rate: float = 0.1,
         max_depth: int = 6,
+        min_child_weight: int = 1,
+        subsample: float = 1.0,
+        colsample_bytree: float = 1.0,
         random_state: int = 42
     ):
         self.model = xgb.XGBRegressor(
             n_estimators=n_estimators,
             learning_rate=learning_rate,
             max_depth=max_depth,
+            min_child_weight=min_child_weight,
+            subsample=subsample,
+            colsample_bytree=colsample_bytree,
             random_state=random_state
         )
         self.is_trained = False
