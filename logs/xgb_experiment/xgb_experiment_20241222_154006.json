@@ -1,0 +1,20 @@
+{
+  "model_name": "xgboost",
+  "metrics": {
+    "mse": 0.37584431612082414,
+    "mae": 0.5040721461176872,
+    "r2": 0.4248799597906068,
+    "training_time": 0.14979910850524902
+  },
+  "parameters": {
+    "model_type": "xgboost",
+    "n_estimators": 200,
+    "learning_rate": 0.01,
+    "max_depth": 4,
+    "min_child_weight": 2,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8
+  },
+  "model_version": "xgb_experiment_20241222_154006",
+  "timestamp": "2024-12-22T15:40:06.635508"
+}

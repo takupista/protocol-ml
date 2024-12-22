@@ -1,0 +1,15 @@
+{
+  "model_name": "random_forest",
+  "metrics": {
+    "mse": 0.30123812499999997,
+    "mae": 0.4224375,
+    "r2": 0.5390429623873638,
+    "training_time": 0.35755395889282227
+  },
+  "parameters": {
+    "model_type": "random_forest",
+    "n_estimators": 100
+  },
+  "model_version": "rf_experiment_20241222_154006",
+  "timestamp": "2024-12-22T15:40:06.127170"
+}
