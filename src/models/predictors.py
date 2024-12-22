@@ -105,6 +105,52 @@ class RandomForestWinePredictor(BaseWinePredictor):
         return float(np.clip(prediction, 0, 10))
 
 
+class RandomBaselinePredictor(BaseWinePredictor):
+    """ランダムな予測を行うベースラインモデル"""
+    
+    def __init__(self, random_state: int = 42):
+        """
+        Args:
+            random_state: 乱数シード
+        """
+        self.random_state = random_state
+        self.rng = np.random.RandomState(random_state)
+        self.is_trained = False
+        self.min_quality = 3  # データセットの最小品質スコア
+        self.max_quality = 8  # データセットの最大品質スコア
+        
+    def train(self, X: pd.DataFrame, y: pd.Series) -> None:
+        """
+        訓練データの品質スコアの範囲を記録する
+        
+        Args:
+            X: 特徴量
+            y: 目的変数（品質スコア）
+        """
+        if len(X) != len(y):
+            raise ValueError("Length of X and y must match")
+        self.min_quality = y.min()
+        self.max_quality = y.max()
+        self.is_trained = True
+    
+    def predict(self, features: WineFeatures) -> float:
+        """
+        ランダムな品質スコアを予測する
+        
+        Args:
+            features: ワインの特徴量
+
+        Returns:
+            float: ランダムな品質スコア（訓練データの範囲内）
+        """
+        if not self.is_trained:
+            raise RuntimeError("Model must be trained before prediction")
+        
+        self._validate_features(features)
+        # 訓練データの範囲内でランダムな値を生成
+        return float(self.rng.uniform(self.min_quality, self.max_quality))
+
+
 class XGBoostWinePredictor(BaseWinePredictor):
     """XGBoostを使用したワイン品質予測モデル"""
     
