@@ -241,6 +241,158 @@ print(f"Available versions: {versions}")
 python main.py
 ```
 
+実行結果は以下の通りです：
+
+```
+2024-12-22 15:39:50,905 - INFO - 
+=== Data Distribution Analysis ===
+2024-12-22 15:39:51,519 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:39:51,521 - INFO - 
+Quality Score Distribution:
+2024-12-22 15:39:51,521 - INFO - Score 3: 10 samples (0.6%)
+2024-12-22 15:39:51,521 - INFO - Score 4: 53 samples (3.3%)
+2024-12-22 15:39:51,521 - INFO - Score 5: 681 samples (42.6%)
+2024-12-22 15:39:51,521 - INFO - Score 6: 638 samples (39.9%)
+2024-12-22 15:39:51,521 - INFO - Score 7: 199 samples (12.4%)
+2024-12-22 15:39:51,521 - INFO - Score 8: 18 samples (1.1%)
+2024-12-22 15:39:51,521 - INFO - 
+Quality Score Statistics:
+2024-12-22 15:39:51,521 - INFO - Mean: 5.64
+2024-12-22 15:39:51,522 - INFO - Median: 6.0
+2024-12-22 15:39:51,522 - INFO - Std Dev: 0.81
+2024-12-22 15:39:51,523 - INFO - 
+Train/Test Split Distribution:
+2024-12-22 15:39:51,524 - INFO - 
+Training Data Distribution:
+2024-12-22 15:39:51,524 - INFO - Score 3: 9 samples (0.7%)
+2024-12-22 15:39:51,524 - INFO - Score 4: 43 samples (3.4%)
+2024-12-22 15:39:51,524 - INFO - Score 5: 551 samples (43.1%)
+2024-12-22 15:39:51,524 - INFO - Score 6: 506 samples (39.6%)
+2024-12-22 15:39:51,524 - INFO - Score 7: 157 samples (12.3%)
+2024-12-22 15:39:51,524 - INFO - Score 8: 13 samples (1.0%)
+2024-12-22 15:39:51,524 - INFO - 
+Test Data Distribution:
+2024-12-22 15:39:51,524 - INFO - Score 3: 1 samples (0.3%)
+2024-12-22 15:39:51,525 - INFO - Score 4: 10 samples (3.1%)
+2024-12-22 15:39:51,525 - INFO - Score 5: 130 samples (40.6%)
+2024-12-22 15:39:51,525 - INFO - Score 6: 132 samples (41.2%)
+2024-12-22 15:39:51,525 - INFO - Score 7: 42 samples (13.1%)
+2024-12-22 15:39:51,525 - INFO - Score 8: 5 samples (1.6%)
+2024-12-22 15:39:51,525 - INFO - 
+=== Cross-Validation Comparison ===
+2024-12-22 15:39:52,174 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:39:54,145 - INFO - 
+Fold 1 Results:
+2024-12-22 15:39:54,145 - INFO - RandomForest MSE: 0.3153
+2024-12-22 15:39:54,145 - INFO - XGBoost MSE: 0.3740
+2024-12-22 15:39:54,145 - INFO - Random Baseline MSE: 2.6673
+2024-12-22 15:39:56,043 - INFO - 
+Fold 2 Results:
+2024-12-22 15:39:56,043 - INFO - RandomForest MSE: 0.3546
+2024-12-22 15:39:56,043 - INFO - XGBoost MSE: 0.4119
+2024-12-22 15:39:56,043 - INFO - Random Baseline MSE: 2.7443
+2024-12-22 15:39:57,934 - INFO - 
+Fold 3 Results:
+2024-12-22 15:39:57,934 - INFO - RandomForest MSE: 0.3587
+2024-12-22 15:39:57,934 - INFO - XGBoost MSE: 0.4201
+2024-12-22 15:39:57,934 - INFO - Random Baseline MSE: 2.3092
+2024-12-22 15:39:59,841 - INFO - 
+Fold 4 Results:
+2024-12-22 15:39:59,841 - INFO - RandomForest MSE: 0.3398
+2024-12-22 15:39:59,841 - INFO - XGBoost MSE: 0.4230
+2024-12-22 15:39:59,841 - INFO - Random Baseline MSE: 2.8322
+2024-12-22 15:40:01,789 - INFO - 
+Fold 5 Results:
+2024-12-22 15:40:01,789 - INFO - RandomForest MSE: 0.2949
+2024-12-22 15:40:01,789 - INFO - XGBoost MSE: 0.3339
+2024-12-22 15:40:01,789 - INFO - Random Baseline MSE: 2.5988
+2024-12-22 15:40:01,789 - INFO - 
+Overall Results:
+2024-12-22 15:40:01,789 - INFO - RandomForest     - Average MSE: 0.3327 (+/- 0.0485)
+2024-12-22 15:40:01,789 - INFO - XGBoost         - Average MSE: 0.3926 (+/- 0.0684)
+2024-12-22 15:40:01,789 - INFO - Random Baseline - Average MSE: 2.6304 (+/- 0.3569)
+2024-12-22 15:40:01,789 - INFO - 
+=== Feature Importance Analysis ===
+2024-12-22 15:40:02,434 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:40:02,878 - INFO - 
+RandomForest Feature Importance:
+2024-12-22 15:40:02,878 - INFO - alcohol: 0.2781
+2024-12-22 15:40:02,878 - INFO - sulphates: 0.1404
+2024-12-22 15:40:02,878 - INFO - volatile_acidity: 0.1267
+2024-12-22 15:40:02,878 - INFO - total_sulfur_dioxide: 0.0792
+2024-12-22 15:40:02,878 - INFO - chlorides: 0.0639
+2024-12-22 15:40:02,878 - INFO - pH: 0.0591
+2024-12-22 15:40:02,878 - INFO - density: 0.0529
+2024-12-22 15:40:02,878 - INFO - residual_sugar: 0.0529
+2024-12-22 15:40:02,878 - INFO - fixed_acidity: 0.0519
+2024-12-22 15:40:02,878 - INFO - citric_acid: 0.0490
+2024-12-22 15:40:02,878 - INFO - free_sulfur_dioxide: 0.0459
+2024-12-22 15:40:03,061 - INFO - 
+XGBoost Feature Importance:
+2024-12-22 15:40:03,061 - INFO - alcohol: 0.2586
+2024-12-22 15:40:03,062 - INFO - sulphates: 0.1596
+2024-12-22 15:40:03,062 - INFO - volatile_acidity: 0.1250
+2024-12-22 15:40:03,062 - INFO - density: 0.0804
+2024-12-22 15:40:03,062 - INFO - total_sulfur_dioxide: 0.0720
+2024-12-22 15:40:03,062 - INFO - pH: 0.0572
+2024-12-22 15:40:03,062 - INFO - citric_acid: 0.0558
+2024-12-22 15:40:03,062 - INFO - fixed_acidity: 0.0535
+2024-12-22 15:40:03,062 - INFO - chlorides: 0.0521
+2024-12-22 15:40:03,062 - INFO - free_sulfur_dioxide: 0.0469
+2024-12-22 15:40:03,062 - INFO - residual_sugar: 0.0388
+2024-12-22 15:40:03,062 - INFO - 
+Feature Correlations with Quality:
+2024-12-22 15:40:03,062 - INFO - alcohol: 0.4762
+2024-12-22 15:40:03,062 - INFO - sulphates: 0.2514
+2024-12-22 15:40:03,062 - INFO - citric_acid: 0.2264
+2024-12-22 15:40:03,062 - INFO - fixed_acidity: 0.1241
+2024-12-22 15:40:03,062 - INFO - residual_sugar: 0.0137
+2024-12-22 15:40:03,062 - INFO - free_sulfur_dioxide: -0.0507
+2024-12-22 15:40:03,062 - INFO - pH: -0.0577
+2024-12-22 15:40:03,062 - INFO - chlorides: -0.1289
+2024-12-22 15:40:03,062 - INFO - density: -0.1749
+2024-12-22 15:40:03,062 - INFO - total_sulfur_dioxide: -0.1851
+2024-12-22 15:40:03,062 - INFO - volatile_acidity: -0.3906
+2024-12-22 15:40:03,065 - INFO - 
+Feature Importance Comparison (RF vs XGBoost):
+2024-12-22 15:40:03,065 - INFO - alcohol: RF=0.2781, XGB=0.2586
+2024-12-22 15:40:03,065 - INFO - sulphates: RF=0.1404, XGB=0.1596
+2024-12-22 15:40:03,065 - INFO - volatile_acidity: RF=0.1267, XGB=0.1250
+2024-12-22 15:40:03,065 - INFO - total_sulfur_dioxide: RF=0.0792, XGB=0.0720
+2024-12-22 15:40:03,065 - INFO - chlorides: RF=0.0639, XGB=0.0521
+2024-12-22 15:40:03,065 - INFO - pH: RF=0.0591, XGB=0.0572
+2024-12-22 15:40:03,066 - INFO - density: RF=0.0529, XGB=0.0804
+2024-12-22 15:40:03,066 - INFO - residual_sugar: RF=0.0529, XGB=0.0388
+2024-12-22 15:40:03,066 - INFO - fixed_acidity: RF=0.0519, XGB=0.0535
+2024-12-22 15:40:03,066 - INFO - citric_acid: RF=0.0490, XGB=0.0558
+2024-12-22 15:40:03,066 - INFO - free_sulfur_dioxide: RF=0.0459, XGB=0.0469
+2024-12-22 15:40:03,066 - INFO - 
+Random Baseline Note:
+2024-12-22 15:40:03,066 - INFO - Random predictions will be between 3.0 and 8.0
+2024-12-22 15:40:03,066 - INFO - 
+=== Basic Prediction Example ===
+2024-12-22 15:40:03,066 - INFO - Starting basic prediction example
+2024-12-22 15:40:03,725 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:40:04,088 - INFO - Predicted wine quality: 5.46
+2024-12-22 15:40:04,088 - INFO - 
+=== Experiment Comparison Example ===
+2024-12-22 15:40:04,088 - INFO - Starting experiment comparison
+2024-12-22 15:40:04,722 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:40:06,640 - INFO - 
+Experiment Results Comparison:
+2024-12-22 15:40:06,640 - INFO - RandomForest     - MSE: 0.3012
+2024-12-22 15:40:06,640 - INFO - XGBoost         - MSE: 0.3758
+2024-12-22 15:40:06,640 - INFO - Random Baseline - MSE: 2.9811
+2024-12-22 15:40:06,640 - INFO - 
+=== Model Management Example ===
+2024-12-22 15:40:06,640 - INFO - Starting model management example
+2024-12-22 15:40:07,908 - INFO - Successfully loaded wine data: 1599 samples
+2024-12-22 15:40:08,463 - INFO - Available model versions: ['v1.0.0', 'v1.0.1', 'v1.0.2']
+2024-12-22 15:40:08,468 - INFO - Prediction using v1.0.0: 5.46
+2024-12-22 15:40:08,472 - INFO - Prediction using v1.0.1: 5.42
+2024-12-22 15:40:08,472 - INFO - Prediction using v1.0.2: 4.87
+```
+
 このスクリプトは以下の処理を行います：
 - 基本的な予測の実行
 - 異なるモデルでの実験比較
