@@ -4,7 +4,11 @@ from sklearn.model_selection import train_test_split, KFold
 import logging
 from pathlib import Path
 
-from src.models.predictors import RandomForestWinePredictor, XGBoostWinePredictor
+from src.models.predictors import (
+    RandomForestWinePredictor,
+    XGBoostWinePredictor,
+    RandomBaselinePredictor
+)
 from src.experiments.experiment import WineQualityExperiment
 from src.infrastructure.model_manager import WineModelManager
 from src.domain.protocols import WineFeatures
@@ -126,6 +130,7 @@ def compare_models_with_cv():
     # 結果を格納するリスト
     rf_mse_scores = []
     xgb_mse_scores = []
+    random_mse_scores = []
     
     # 各分割でモデルを訓練・評価
     for fold, (train_idx, val_idx) in enumerate(kf.split(X), 1):
@@ -159,18 +164,31 @@ def compare_models_with_cv():
         ])
         xgb_mse = np.mean((xgb_val_predictions - y_val) ** 2)
         xgb_mse_scores.append(xgb_mse)
+
+        # Random Baseline
+        random_predictor = RandomBaselinePredictor(random_state=42 + fold)  # 各foldで異なるシード
+        random_predictor.train(X_train, y_train)
+        random_val_predictions = np.array([
+            random_predictor.predict(WineFeatures(**features))
+            for features in X_val.to_dict('records')
+        ])
+        random_mse = np.mean((random_val_predictions - y_val) ** 2)
+        random_mse_scores.append(random_mse)
         
         logger.info(f"\nFold {fold} Results:")
         logger.info(f"RandomForest MSE: {rf_mse:.4f}")
         logger.info(f"XGBoost MSE: {xgb_mse:.4f}")
+        logger.info(f"Random Baseline MSE: {random_mse:.4f}")
     
     # 全体の結果をまとめる
     rf_mse_scores = np.array(rf_mse_scores)
     xgb_mse_scores = np.array(xgb_mse_scores)
+    random_mse_scores = np.array(random_mse_scores)
     
     logger.info("\nOverall Results:")
-    logger.info(f"RandomForest - Average MSE: {rf_mse_scores.mean():.4f} (+/- {rf_mse_scores.std() * 2:.4f})")
-    logger.info(f"XGBoost     - Average MSE: {xgb_mse_scores.mean():.4f} (+/- {xgb_mse_scores.std() * 2:.4f})")
+    logger.info(f"RandomForest     - Average MSE: {rf_mse_scores.mean():.4f} (+/- {rf_mse_scores.std() * 2:.4f})")
+    logger.info(f"XGBoost         - Average MSE: {xgb_mse_scores.mean():.4f} (+/- {xgb_mse_scores.std() * 2:.4f})")
+    logger.info(f"Random Baseline - Average MSE: {random_mse_scores.mean():.4f} (+/- {random_mse_scores.std() * 2:.4f})")
 
 def analyze_feature_importance():
     """
@@ -178,6 +196,7 @@ def analyze_feature_importance():
     
     各モデルが各特徴量をどの程度重視しているかを確認
     特定の特徴量への過度の依存がないかチェック
+    異なるモデル間での特徴量の重要度の違いを比較
     """
     logger.info("\n=== Feature Importance Analysis ===")
     
@@ -197,7 +216,7 @@ def analyze_feature_importance():
     logger.info("\nRandomForest Feature Importance:")
     for _, row in rf_importance.iterrows():
         logger.info(f"{row['feature']}: {row['importance']:.4f}")
-
+    
     # XGBoostの特徴量重要度
     xgb_predictor = XGBoostWinePredictor(
         n_estimators=200,
@@ -223,6 +242,17 @@ def analyze_feature_importance():
     for feature, corr in correlations.items():
         if feature != 'quality':
             logger.info(f"{feature}: {corr:.4f}")
+            
+    # モデル間の特徴量重要度の比較
+    importance_comparison = pd.DataFrame({
+        'feature': X.columns,
+        'rf_importance': rf_predictor.model.feature_importances_,
+        'xgb_importance': xgb_predictor.model.feature_importances_
+    }).sort_values('rf_importance', ascending=False)
+    
+    logger.info("\nFeature Importance Comparison (RF vs XGBoost):")
+    for _, row in importance_comparison.iterrows():
+        logger.info(f"{row['feature']}: RF={row['rf_importance']:.4f}, XGB={row['xgb_importance']:.4f}")
 
 def run_basic_prediction():
     """
