@@ -7,7 +7,7 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 
 from src.domain.protocols import ModelManager, Predictor
-from src.models.predictors import RandomForestWinePredictor, XGBoostWinePredictor
+from src.models.predictors import RandomForestWinePredictor, XGBoostWinePredictor, RandomBaselinePredictor
 
 class WineModelManager(ModelManager):
     """ワイン品質予測モデルを管理するクラス"""
@@ -15,7 +15,8 @@ class WineModelManager(ModelManager):
     # モデルクラスのマッピング
     MODEL_CLASSES = {
         "RandomForestWinePredictor": RandomForestWinePredictor,
-        "XGBoostWinePredictor": XGBoostWinePredictor
+        "XGBoostWinePredictor": XGBoostWinePredictor,
+        "RandomBaselinePredictor": RandomBaselinePredictor
     }
 
     def __init__(self, model_dir: str = "./models"):
